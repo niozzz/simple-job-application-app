@@ -12,8 +12,8 @@ router.use("/api/jobs", jobRoutes);
 router.use("/api/applies", applyRoutes);
 
 // API Authentication
-router.post("/login", authController.login);
-router.post("/register", authController.register);
+router.post("/api/login", authController.login);
+router.post("/api/register", authController.register);
 
 // Default route
 router.get("/", (req, res) => {

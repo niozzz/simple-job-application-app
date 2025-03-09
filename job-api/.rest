@@ -1,5 +1,5 @@
 ### Register a new user with role
-POST http://localhost:4000/register
+POST http://localhost:4000/api/register
 Content-Type: application/json
 
 {
@@ -39,10 +39,10 @@ Content-Type: application/json
 }
 
 ### login
-POST http://localhost:4000/login
+POST http://localhost:4000/api/login
 Content-Type: application/json
 
 {
-  "username": "johndoe",
-  "password": "your_password"
+  "username": "employers",
+  "password": "12345678"
 }

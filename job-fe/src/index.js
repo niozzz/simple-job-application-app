@@ -4,6 +4,12 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import JobList from "./page/jobList";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:4000/api";
+axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
+  "token"
+)}`;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

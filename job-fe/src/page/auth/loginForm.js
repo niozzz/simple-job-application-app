@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +22,10 @@ const LoginForm = () => {
         throw new Error("Invalid credentials");
       }
       const data = await response.json();
-      console.log(data);
-      // Handle successful login (e.g., redirect to dashboard)
+      // Set access token to local storage
+      localStorage.setItem("token", data.token);
+      // Navigate to jobs page after successful login
+      navigate("/jobs", { replace: true });
     } catch (error) {
       setError(error.message);
     }

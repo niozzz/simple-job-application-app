@@ -2,11 +2,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login", { replace: true });
+  };
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -19,7 +26,12 @@ const JobList = () => {
       } catch (error) {
         // Handle Axios error
         if (error.response) {
-          setError(error.response.data);
+          if (error.response.status === 401 || error.response.status === 403) {
+            // Redirect to login page if unauthorized or forbidden
+            navigate("/login");
+          } else {
+            setError(error.response.data);
+          }
         } else if (error.request) {
           setError("No response received");
         } else {
@@ -37,11 +49,19 @@ const JobList = () => {
   return (
     <div className="max-w-5xl mx-auto mt-10">
       <h1 className="text-3xl font-bold mb-4">Job Listings</h1>
-      <Link to="/jobs/create">
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
-          Create Job
+      <div className="flex justify-between mb-4">
+        <Link to="/jobs/create">
+          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Create Job
+          </button>
+        </Link>
+        <button
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleLogout}
+        >
+          Logout
         </button>
-      </Link>
+      </div>
       {jobs.map((job) => (
         <div key={job.id} className="bg-white shadow-md rounded-lg p-6 mb-4">
           <h2 className="text-2xl font-bold mb-2">{job.title}</h2>
