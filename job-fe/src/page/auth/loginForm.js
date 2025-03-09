@@ -1,30 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
 
 const LoginForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const { login } = useContext(UserContext);
   const navigate = useNavigate();
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Example API call to login
-      const response = await fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!response.ok) {
-        throw new Error("Invalid credentials");
-      }
-      const data = await response.json();
-      // Set access token to local storage
-      localStorage.setItem("token", data.token);
-      // Navigate to jobs page after successful login
+      await login(username, password);
       navigate("/jobs", { replace: true });
     } catch (error) {
       setError(error.message);
