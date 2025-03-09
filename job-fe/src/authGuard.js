@@ -7,8 +7,10 @@ const AuthGuard = ({ children }) => {
   const { user } = useContext(UserContext);
   const location = useLocation();
 
-  if (!user) {
-    // return <Navigate to="/login" state={{ from: location }} replace />;
+  const userId = parseInt(localStorage.getItem("userId"));
+
+  if (!userId) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;
