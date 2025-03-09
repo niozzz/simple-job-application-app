@@ -17,6 +17,10 @@ const UserProvider = ({ children }) => {
       });
       const data = await response.json();
       localStorage.setItem("token", data.token);
+
+      // tidak disarankan untuk production
+      localStorage.setItem("role", data.role);
+
       setUser({ token: data.token, role: data.role });
     } catch (error) {
       console.error("Error logging in:", error);

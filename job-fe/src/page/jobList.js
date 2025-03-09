@@ -10,8 +10,14 @@ const JobList = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // akan hilang jika browser di-refresh
+  //   const { user } = useContext(UserContext);
+
+  const userRole = localStorage.getItem("role");
+
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/login", { replace: true });
   };
 
@@ -48,19 +54,38 @@ const JobList = () => {
 
   return (
     <div className="max-w-5xl mx-auto mt-10">
-      <h1 className="text-3xl font-bold mb-4">Job Listings</h1>
+      <h1 className="text-3xl font-bold ">Job Listings</h1>
+      <p className="text-gray-600 mb-4">Role: {userRole}</p>
       <div className="flex justify-between mb-4">
-        <Link to="/jobs/create">
-          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Create Job
-          </button>
-        </Link>
+        <div className="flex items-center">
+          {userRole === "employer" && (
+            <Link to="/jobs/create">
+              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ">
+                Create Job
+              </button>
+            </Link>
+          )}
+        </div>
         <button
           className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
           onClick={handleLogout}
         >
           Logout
         </button>
+      </div>
+      <div className="flex mb-4">
+        <input
+          type="search"
+          placeholder="Search jobs"
+          className="w-full p-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600"
+        />
+        <div className="ml-4">
+          <select className="p-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600">
+            <option value="all">All Locations</option>
+            <option value="new-york">New York</option>
+            <option value="los-angeles">Los Angeles</option>
+          </select>
+        </div>
       </div>
       {jobs.map((job) => (
         <div key={job.id} className="bg-white shadow-md rounded-lg p-6 mb-4">
@@ -69,11 +94,15 @@ const JobList = () => {
           <p className="text-gray-600 mb-2">Location: {job.location}</p>
           <p className="text-gray-600 mb-2">Salary Range: {job.salaryRange}</p>
           <p className="text-gray-600 mb-4">{job.description}</p>
-          <Link to={`/jobs/${job.id}/apply`}>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Apply
-            </button>
-          </Link>
+          <div className="flex justify-end">
+            {userRole === "jobSeeker" && (
+              <Link to={`/jobs/${job.id}/apply`}>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  Apply
+                </button>
+              </Link>
+            )}
+          </div>
         </div>
       ))}
     </div>
