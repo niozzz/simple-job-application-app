@@ -16,6 +16,7 @@ const UserProvider = ({ children }) => {
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
+      localStorage.setItem("token", data.token);
       setUser({ token: data.token, role: data.role });
     } catch (error) {
       console.error("Error logging in:", error);
