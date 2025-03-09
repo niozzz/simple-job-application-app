@@ -1,0 +1,40 @@
+### Register a new user with role
+POST http://localhost:4000/api/users/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securepassword123",
+  "role": "user"
+}
+
+### Get all jobs
+GET http://localhost:4000/api/jobs
+Accept: application/json
+
+### Create a new job
+POST http://localhost:4000/api/jobs
+Content-Type: application/json
+
+{
+  "title": "Full Stack Developer",
+  "description": "We are looking for an experienced full stack developer to join our team. The ideal candidate will have experience with Node.js, React, and PostgreSQL.",
+  "companyName": "Tech Solutions Inc.",
+  "salaryRange": "$80,000 - $120,000",
+  "location": "New York, NY"
+}
+
+### Get all applies
+GET http://localhost:4000/api/applies
+Accept: application/json
+
+### Create a new job application
+POST http://localhost:4000/api/applies
+Content-Type: application/json
+
+{
+  "jobId": 1,
+  "userId": 1,
+  "applicationDate": "2025-03-08T09:55:00.000Z"
+}
