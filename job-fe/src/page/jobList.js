@@ -25,6 +25,8 @@ const JobList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasApplied, setHasApplied] = useState({}); // Track application status
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("all");
   const navigate = useNavigate();
 
   const userRole = localStorage.getItem("role");
@@ -110,6 +112,21 @@ const JobList = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const uniqueLocations = loading
+    ? []
+    : [...new Set(jobs.map((job) => job.location))];
+
+  // Filter jobs based on search query and selected location
+  const filteredJobs = jobs.filter((job) => {
+    const searchMatch =
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const locationMatch =
+      selectedLocation === "all" || job.location === selectedLocation;
+    return searchMatch && locationMatch;
+  });
+
   return (
     <div className="max-w-5xl mx-auto mt-10">
       <h1 className="text-3xl font-bold ">Job Listings</h1>
@@ -136,16 +153,25 @@ const JobList = () => {
           type="search"
           placeholder="Search jobs"
           className="w-full p-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="ml-4">
-          <select className="p-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600">
+          <select
+            className="p-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600"
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+          >
             <option value="all">All Locations</option>
-            <option value="new-york">New York</option>
-            <option value="los-angeles">Los Angeles</option>
+            {uniqueLocations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
           </select>
         </div>
       </div>
-      {jobs.map((job) => (
+      {filteredJobs.map((job) => (
         <div key={job.id} className="bg-white shadow-md rounded-lg p-6 mb-4">
           <h2 className="text-2xl font-bold mb-2">{job.title}</h2>
           <p className="text-gray-600 mb-2">Company: {job.companyName}</p>
