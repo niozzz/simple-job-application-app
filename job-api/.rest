@@ -1,12 +1,12 @@
 ### Register a new user with role
-POST http://localhost:4000/api/users/register
+POST http://localhost:4000/register
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "securepassword123",
-  "role": "user"
+  "name": "employers",
+  "email": "employers@example.com",
+  "password": "12345678",
+  "role": "employers"
 }
 
 ### Get all jobs
@@ -36,4 +36,13 @@ Content-Type: application/json
 {
   "userId": 1,
   "applicationDate": "2025-03-08T09:55:00.000Z"
+}
+
+### login
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "password": "your_password"
 }
