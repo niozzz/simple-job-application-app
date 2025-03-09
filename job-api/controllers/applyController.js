@@ -1,11 +1,14 @@
 const { Apply } = require("../models");
 
-// Create new job
 exports.createApply = async (req, res) => {
   try {
-    const { jobId, userId, applicationDate } = req.body;
+    // Extract jobId from URL parameters
+    const jobId = req.params.id;
 
-    // Simple validation
+    // Extract userId and applicationDate from request body
+    const { userId, applicationDate } = req.body;
+
+    // Validate parameters
     if (!jobId || !userId || !applicationDate) {
       return res.status(400).json({
         success: false,
@@ -13,13 +16,14 @@ exports.createApply = async (req, res) => {
       });
     }
 
-    // Create job
+    // Create application
     const apply = await Apply.create({
       jobId,
       userId,
       applicationDate,
     });
 
+    // Return success response
     return res.status(201).json({
       success: true,
       data: {
