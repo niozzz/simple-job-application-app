@@ -7,6 +7,7 @@ import JobCreate from "./page/job/jobCreate";
 import LoginForm from "./page/auth/loginForm";
 import { UserProvider } from "./context/userContext";
 import AuthGuard from "./authGuard";
+import RegisterForm from "./page/auth/registerForm";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
           <Route
             path="/jobs/*"
             element={

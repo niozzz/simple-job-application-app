@@ -1,3 +1,4 @@
+// LoginForm.js
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
@@ -65,6 +66,15 @@ const LoginForm = () => {
           Login
         </button>
       </form>
+      <p className="text-gray-600 mt-4">
+        Don't have an account?{" "}
+        <button
+          className="text-blue-500 hover:text-blue-700"
+          onClick={() => navigate("/register")}
+        >
+          Register
+        </button>
+      </p>
     </div>
   );
 };
