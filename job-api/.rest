@@ -3,10 +3,10 @@ POST http://localhost:4000/api/register
 Content-Type: application/json
 
 {
-  "name": "employers",
-  "email": "employers@example.com",
+  "name": "seeker",
+  "email": "seeker@example.com",
   "password": "12345678",
-  "role": "employers"
+  "role": "jobSeeker"
 }
 
 ### Get all jobs

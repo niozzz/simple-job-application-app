@@ -1,39 +1,97 @@
-// JobList.js
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+function formatApplicationDate(isoDate) {
+  // Remove milliseconds and 'Z', then parse the date
+  const parsedDate = new Date(isoDate.replace("Z", "+00:00").split(".")[0]);
+
+  // Add 7 hours to convert to UTC+7
+  const utcPlus7Date = new Date(parsedDate.getTime() + 7 * 60 * 60 * 1000);
+
+  // Format the date to H:M DD-MM-YYYY
+  const hours = utcPlus7Date.getHours().toString().padStart(2, "0");
+  const minutes = utcPlus7Date.getMinutes().toString().padStart(2, "0");
+  const day = utcPlus7Date.getDate().toString().padStart(2, "0");
+  const month = (utcPlus7Date.getMonth() + 1).toString().padStart(2, "0");
+  const year = utcPlus7Date.getFullYear();
+
+  return `${hours}:${minutes} ${day}-${month}-${year}`;
+}
+
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hasApplied, setHasApplied] = useState({}); // Track application status
   const navigate = useNavigate();
 
-  // akan hilang jika browser di-refresh
-  //   const { user } = useContext(UserContext);
-
   const userRole = localStorage.getItem("role");
+  const userId = parseInt(localStorage.getItem("userId"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("userId");
     navigate("/login", { replace: true });
+  };
+
+  const handleApply = async (jobId) => {
+    try {
+      const applicationDate = new Date().toISOString();
+
+      const response = await axios.post(
+        `http://localhost:4000/api/jobs/${jobId}/apply`,
+        {
+          userId,
+          applicationDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      alert("Job application submitted successfully!");
+      // Update hasApplied state
+      setHasApplied((prevHasApplied) => ({
+        ...prevHasApplied,
+        [jobId]: { isApplied: true, applicationDate },
+      }));
+    } catch (error) {
+      console.error("Error applying for the job:", error);
+      alert("Error applying for the job. Please try again.");
+    }
   };
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        // Use Axios to make the request
         const response = await axios.get("http://localhost:4000/api/jobs");
-        console.log(response);
-        setJobs(response.data.data); // Axios returns data directly
+        setJobs(response.data.data);
+
+        const appliedResponse = await axios.get(
+          "http://localhost:4000/api/applies"
+        );
+        const applies = appliedResponse.data.data;
+
+        const appliedStatus = response.data.data.reduce((acc, job) => {
+          const applyRecord = applies.find(
+            (apply) => apply.jobId === job.id && apply.userId === userId
+          );
+          acc[job.id] = applyRecord
+            ? { isApplied: true, applicationDate: applyRecord.applicationDate }
+            : { isApplied: false, applicationDate: null };
+          return acc;
+        }, {});
+
+        setHasApplied(appliedStatus);
         setLoading(false);
       } catch (error) {
-        // Handle Axios error
         if (error.response) {
           if (error.response.status === 401 || error.response.status === 403) {
-            // Redirect to login page if unauthorized or forbidden
             navigate("/login");
           } else {
             setError(error.response.data);
@@ -95,13 +153,20 @@ const JobList = () => {
           <p className="text-gray-600 mb-2">Salary Range: {job.salaryRange}</p>
           <p className="text-gray-600 mb-4">{job.description}</p>
           <div className="flex justify-end">
-            {userRole === "jobSeeker" && (
-              <Link to={`/jobs/${job.id}/apply`}>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            {userRole === "jobSeeker" &&
+              (hasApplied[job.id] && hasApplied[job.id].isApplied ? (
+                <p className="text-gray-600 font-bold">
+                  Applied on{" "}
+                  {formatApplicationDate(hasApplied[job.id].applicationDate)}
+                </p>
+              ) : (
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => handleApply(job.id)}
+                >
                   Apply
                 </button>
-              </Link>
-            )}
+              ))}
           </div>
         </div>
       ))}

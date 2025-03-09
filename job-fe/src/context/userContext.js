@@ -17,6 +17,7 @@ const UserProvider = ({ children }) => {
       });
       const data = await response.json();
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.userId);
 
       // tidak disarankan untuk production
       localStorage.setItem("role", data.role);
