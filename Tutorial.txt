@@ -1,0 +1,13 @@
+# SETUP POSTGRESQL
+1. Buka Docker Engine
+2. buka CMD di path ./docker-postgresql
+3. jalankan command "docker compose up -d"
+
+# SETUP Backend
+1. Buka Code Editor di path ./job-api
+2. jalankan command "npx sequelize-cli db:migrate"
+3. jalankan command "npm install" & "npm start"
+
+# SETUP Frontend
+1. Buka Code Editor di path ./job-fe
+2. jalankan command "npm install" & "npm start"
